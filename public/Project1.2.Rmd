@@ -1,0 +1,99 @@
+### Quynh Lam QTL83
+# SDS 348 Fall 2019
+# Oct 20th, 2019
+# Project 1
+```{r}
+library(knitr)
+library(tidyverse)
+library(tidyr)
+library(ggplot2)
+opts_chunk$set(fig.align="center", fig.height=5, message=FALSE, fig.width=8,tidy.opts=list(width.cutoff=60),tidy=TRUE)
+```
+# Introduction
+This project consist of the two datasets of gender development and happiness. I acquired the two datasets by using the website kaggle.com and searching their database for two datasets I found interesting. I chose gender development and happiness because I wanted to see if there was any significance between the two. In the gender development database, it consists of variables that include gender development index (GDI) and GDI rank, which help to determine the gender development in the different countries. The happiness data included a happiness score, happiness rank, and generosity.
+
+# Joining
+I joined the two datasets by using the function full_join and joining them by countries. The two datasets had a common variable of countries and by joining them together, it would help me to further evaluate whether there was a significance in gender development and happiness between each of the countries and if there is a difference. 
+```{r}
+gender_development <- read.csv("~/Downloads/gender_development.csv")
+X2015 <- read.csv("~/Downloads/2015.csv")
+
+happiness_gender<-full_join(gender_development,X2015, by="Country")
+happiness_gender<-happiness_gender%>%na.omit
+```
+
+# Wrangling
+By using dplyr functions, I was able to summarize and find the mean values of happiness scores, human development index in both genders, and gender development index and their standard deviations. I grouped each by their region and compared the results of each by region. I also was able to see certain countries by filtering the region and picking a specific region. In this case, I chose the sub-saharan africa region and was able to obtain the countries that were in this region and found the results of mean averages of happiness scores and gender development index.
+
+```{r}
+happiness_gender%>%group_by(Region)%>%summarize(mean_happyscore=mean(happiness_gender$'Happiness.Score',na.rm=T),sd_happyscore=sd(happiness_gender$'Happiness.Score',na.rm=T))
+```
+
+```{r}
+happiness_gender$`Gender.Development.Index..GDI.`<-as.numeric(happiness_gender$`Gender.Development.Index..GDI.`)
+happiness_gender%>%group_by(Region)%>%summarize(mean_GDI=mean(happiness_gender$`Gender.Development.Index..GDI.`, na.rm=T),sd_GDI=sd(happiness_gender$`Gender.Development.Index..GDI.`, na.rm=T))
+```
+
+```{r}
+happiness_gender$`Human.Development.Index..Female.`<-as.numeric(happiness_gender$`Human.Development.Index..Female.`)
+happiness_gender%>%group_by(Region)%>%summarize(mean_GDI=mean(happiness_gender$`Human.Development.Index..Female.`, na.rm=T),sd_GDI=sd(happiness_gender$`Human.Development.Index..Female.`, na.rm=T))
+#in this code, I had change the variable into numeric values and then checked to see if any of the variables I was using had to be changed to numeric values as well
+
+```
+
+```{r}
+happiness_gender$`Human.Development.Index..Male.`<-as.numeric(happiness_gender$`Human.Development.Index..Male.`)
+happiness_gender%>%group_by(Region)%>%summarize(mean_GDI=mean(happiness_gender$`Human.Development.Index..Male.`, na.rm=T),sd_GDI=sd(happiness_gender$`Human.Development.Index..Male.`, na.rm=T))
+```
+
+```{r}
+happiness_gender%>%group_by(Region)%>%summarize(mean_generosity=mean(happiness_gender$'Generosity',na.rm=T),sd_generoisty=sd(happiness_gender$'Generosity',na.rm=T))
+```
+
+```{r}
+happiness_gender%>%filter(Region=="Sub-Saharan Africa")%>%select('Country','Happiness.Score',`Gender.Development.Index..GDI.`)
+```
+
+```{r}
+happiness_gender%>%filter(Region=="Sub-Saharan Africa")%>%select('Country','Generosity',
+'Estimated.Gross.National.Income.per.Capita..Female.','Estimated.Gross.National.Income.per.Capita..Male.')%>%glimpse()
+```
+
+```{r}
+happiness_gender%>%group_by(Region)%>%summarize(mean_healthlife=mean(happiness_gender$'Health..Life.Expectancy.',na.rm=T),sd_healthlife=sd(happiness_gender$'Health..Life.Expectancy.',na.rm=T))%>%glimpse()
+```
+
+```{r}
+happiness_gender%>%filter(Region=="Sub-Saharan Africa")%>%select('Country','Health..Life.Expectancy.','Gender.Development.Index..GDI.', 'Happiness.Score')%>%glimpse()
+```
+
+# Visualization
+In the plots below, I wanted to visualize the correlation between Happiness Score and Gender Development Index and plotted them by region. In the graph, we see a positive correlation in that the higher the Gender Development Index, the higher the happiness score is as well. We also see that in the different regions that Austrailia-New Zealand had the highest and the Sub-Saharan Africa had the lowest. I also visualized the happiness score of each region by using a bar graph and also making another bar graph to visualize the gender development index of each region. 
+
+```{r}
+ggplot(happiness_gender, aes(x=happiness_gender$`Gender.Development.Index..GDI.`,y=happiness_gender$`Happiness.Score`,color=happiness_gender$Region))+geom_point(size=2)+
+  ggtitle("Happiness Score vs GDI")+
+  labs(x="GDI",y="Happiness Score")
+```
+
+```{r}
+ggplot(happiness_gender, aes(x=happiness_gender$`Region`,y=happiness_gender$`Happiness.Score`,color=happiness_gender$Region))+geom_bar(aes(y=happiness_gender$`Happiness.Score`),stat="summary",fun.y="mean")+
+  ggtitle("Happiness Score by Region")+
+  labs(x="Region",y="Happiness Score")+
+  theme(axis.text.x = element_text(angle=45, hjust=1),legend.position = "none")
+```
+
+```{r}
+ggplot(happiness_gender, aes(x=happiness_gender$`Region`,y=happiness_gender$`Gender.Development.Index..GDI.`,color=happiness_gender$Region))+geom_bar(aes(y=happiness_gender$`Gender.Development.Index..GDI.`),stat="summary",fun.y="mean")+
+  ggtitle("GDI by Region")+
+  labs(x="Region",y="Gender Development Index")+
+  theme(axis.text.x = element_text(angle=45, hjust=1),legend.position = "none")
+```
+
+# PCA/Clustering
+
+```{r}
+happiness_gender%>%select('Generosity','Gender.Development.Index..GDI.','Happiness.Score')%>%scale%>%prcomp() -> hap_gender_PCA
+summary(hap_gender_PCA)
+```
+

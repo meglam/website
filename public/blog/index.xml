@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Blogs on Meghan Lam</title>
+    <link>/blog/</link>
+    <description>Recent content in Blogs on Meghan Lam</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-US</language>
+    <lastBuildDate>Sun, 15 Dec 2019 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/blog/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Camp Kesem</title>
+      <link>/blog/camp-kesem/</link>
+      <pubDate>Sun, 15 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/blog/camp-kesem/</guid>
+      <description>Camp Kesem is a non-profit organzation where we provide a week long of free camp for children whose parents have been affected by cancer. I had the most amazing opportunity to become a camp counselor this past summer where I served as a counselor for ages 6-8 (the littlest of the bunch!). The experience was truly eye-opening and made me want to consider a career where I was able to work with and interact with kids.</description>
+    </item>
+    
+  </channel>
+</rss>
